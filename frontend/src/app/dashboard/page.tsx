@@ -16,6 +16,7 @@ import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import SavingsIcon from "@mui/icons-material/Savings";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import PieChartIcon from "@mui/icons-material/PieChart";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 
 const modalStyle = {
   position: "absolute" as const,
@@ -29,8 +30,14 @@ const modalStyle = {
   p: 4,
 };
 
+type spending = "Balanced" | "50-30-20" | "70-20-10";
+
 export default function Dashboard() {
+  const [money, setMoney] = useState(10000);
   const [income, setIncome] = useState(4500);
+  const [goals, setGoals] = useState(2000);
+  const [credit, setCredit] = useState(1200);
+  const [spending, setSpending] = useState("Balanced");
   const [openModal, setOpenModal] = useState(false);
   const [tempIncome, setTempIncome] = useState(income);
 
@@ -49,19 +56,53 @@ export default function Dashboard() {
       <Typography variant="h1" gutterBottom>
         Dashboard
       </Typography>
-      <Typography variant="body1" color="text.secondary" gutterBottom>
+      <Typography variant="body1" color="secondary" gutterBottom>
         Welcome back! Here’s a quick look at your finances.
       </Typography>
-
+      <Card
+        elevation={3}
+        sx={{
+          mt: 4,
+          bgcolor: "primary.main",
+          color: "secondary",
+          borderRadius: 2,
+        }}
+      >
+        <CardContent>
+          <Box
+            display="flex"
+            alignItems="center"
+            gap={4}
+            justifyContent={"center"}
+          >
+            <AttachMoneyIcon color="secondary" fontSize="large" />
+            <Box display="flex" alignItems="center" flexDirection={"column"}>
+              <Typography variant="h6">Total Money</Typography>
+              <Typography variant="h5" my={1}>
+                $
+                {money
+                  ? money.toLocaleString("es-MX", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })
+                  : "$0.00"}
+              </Typography>
+              <Button size="small" color="secondary" onClick={handleOpen}>
+                Edit
+              </Button>
+            </Box>
+          </Box>
+        </CardContent>
+      </Card>
       <Grid container spacing={3} mt={2}>
         <Grid item xs={12} md={3}>
-          <Card elevation={3}>
+          <Card elevation={3} sx={{ borderRadius: 2 }}>
             <CardContent>
               <Box
                 display="flex"
                 alignItems="center"
-                gap={2}
-                justifyContent={"space-around"}
+                gap={4}
+                justifyContent={"center"}
               >
                 <TrendingUpIcon color="secondary" fontSize="large" />
                 <Box
@@ -71,7 +112,13 @@ export default function Dashboard() {
                 >
                   <Typography variant="h6">Monthly Income</Typography>
                   <Typography variant="h5" my={1}>
-                    ${income}{" "}
+                    $
+                    {income
+                      ? income.toLocaleString("es-MX", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })
+                      : "$0.00"}
                   </Typography>
                   <Button size="small" color="secondary" onClick={handleOpen}>
                     Edit
@@ -80,11 +127,42 @@ export default function Dashboard() {
               </Box>
             </CardContent>
           </Card>
+          <Modal open={openModal} onClose={handleClose}>
+            <Box sx={modalStyle}>
+              <Typography variant="h6" mb={2}>
+                Edit Monthly Income
+              </Typography>
+              <TextField
+                label="Income"
+                type="number"
+                value={tempIncome}
+                onChange={(e) => setTempIncome(Number(e.target.value))}
+                fullWidth
+              />
+              <Box display="flex" justifyContent="space-between" mt={2}>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  onClick={handleClose}
+                >
+                  Cancel
+                </Button>
+                <Button variant="contained" onClick={handleSave}>
+                  Save
+                </Button>
+              </Box>
+            </Box>
+          </Modal>
         </Grid>
         <Grid item xs={12} md={3}>
-          <Card elevation={3}>
+          <Card elevation={3} sx={{ borderRadius: 2 }}>
             <CardContent>
-              <Box display="flex" alignItems="center" gap={2}>
+              <Box
+                display="flex"
+                alignItems="center"
+                gap={5}
+                justifyContent={"center"}
+              >
                 <SavingsIcon color="secondary" fontSize="large" />
                 <Box
                   display="flex"
@@ -93,7 +171,13 @@ export default function Dashboard() {
                 >
                   <Typography variant="h6">Savings Goal</Typography>
                   <Typography variant="h5" my={1}>
-                    $10,000
+                    $
+                    {goals
+                      ? goals.toLocaleString("es-MX", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })
+                      : "$0.00"}
                   </Typography>
                   <Button size="small" color="secondary" onClick={handleOpen}>
                     Edit
@@ -104,10 +188,15 @@ export default function Dashboard() {
           </Card>
         </Grid>
         <Grid item xs={12} md={3}>
-          <Card elevation={3}>
+          <Card elevation={3} sx={{ borderRadius: 2 }}>
             <CardContent>
-              <Box display="flex" alignItems="center" gap={2}>
-                <CreditCardIcon color="error" fontSize="large" />
+              <Box
+                display="flex"
+                alignItems="center"
+                gap={5}
+                justifyContent={"center"}
+              >
+                <CreditCardIcon color="secondary" fontSize="large" />
                 <Box
                   display="flex"
                   alignItems="center"
@@ -115,7 +204,13 @@ export default function Dashboard() {
                 >
                   <Typography variant="h6">Credit Usage</Typography>
                   <Typography variant="h5" my={1}>
-                    $1,200
+                    $
+                    {credit
+                      ? credit.toLocaleString("es-MX", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })
+                      : "$0.00"}
                   </Typography>
                   <Button size="small" color="secondary" onClick={handleOpen}>
                     Edit
@@ -126,18 +221,24 @@ export default function Dashboard() {
           </Card>
         </Grid>
         <Grid item xs={12} md={3}>
-          <Card elevation={3}>
+          <Card elevation={3} sx={{ borderRadius: 2 }}>
             <CardContent>
-              <Box display="flex" alignItems="center" gap={2}>
-                <PieChartIcon color="warning" fontSize="large" />
+              <Box
+                display="flex"
+                alignItems="center"
+                gap={5}
+                justifyContent={"center"}
+              >
+                <PieChartIcon color="secondary" fontSize="large" />
                 <Box
                   display="flex"
                   alignItems="center"
                   flexDirection={"column"}
+                  textAlign={"center"}
                 >
                   <Typography variant="h6">Spending 50-30-20</Typography>
                   <Typography variant="h5" my={1}>
-                    Balanced
+                    {spending}
                   </Typography>
                   <Button size="small" color="secondary" onClick={handleOpen}>
                     Edit
