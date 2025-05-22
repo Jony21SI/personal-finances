@@ -17,6 +17,9 @@ import SavingsIcon from "@mui/icons-material/Savings";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import PieChartIcon from "@mui/icons-material/PieChart";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import EditIncomeModal from "../components/EditIncomeModal";
+import EditMoneyModal from "../components/EditMoneyModal";
+import EditCreditModal from "../components/EditCreditModal";
 
 const modalStyle = {
   position: "absolute" as const,
@@ -40,15 +43,56 @@ export default function Dashboard() {
   const [spending, setSpending] = useState("Balanced");
   const [openModal, setOpenModal] = useState(false);
   const [tempIncome, setTempIncome] = useState(income);
+  const [tempMoney, setTempMoney] = useState(money);
+  const [tempGoals, setTempGoals] = useState(goals);
+  const [tempCredit, setTempCredit] = useState(credit);
+  const [tempCreditUsage, setTempCreditUsage] = useState(0);
+  const [tempSpending, setTempSpending] = useState(spending);
+  const [activeModal, setActiveModal] = useState<
+    null | "money" | "income" | "goals" | "credit" | "spending"
+  >(null);
 
-  const handleOpen = () => {
-    setTempIncome(income);
-    setOpenModal(true);
+  const handleOpen = (
+    type: "money" | "income" | "goals" | "credit" | "spending"
+  ) => {
+    if (type === "income") {
+      setTempIncome(income);
+    }
+    if (type === "money") {
+      setTempMoney(money);
+    }
+    if (type === "goals") {
+      setTempGoals(goals);
+    }
+    if (type === "credit") {
+      setTempCredit(credit);
+    }
+    if (type === "spending") {
+      setTempSpending(spending);
+    }
+    setActiveModal(type);
   };
-  const handleClose = () => setOpenModal(false);
+
+  const handleClose = () => setActiveModal(null);
+
   const handleSave = () => {
-    setIncome(tempIncome);
-    handleClose();
+    if (activeModal === "income") {
+      setIncome(tempIncome);
+    }
+    if (activeModal === "money") {
+      setMoney(tempMoney);
+    }
+    if (activeModal === "goals") {
+      setGoals(tempGoals);
+    }
+    if (activeModal === "credit") {
+      setCredit(tempCredit);
+      setTempCreditUsage(tempCreditUsage);
+    }
+    if (activeModal === "spending") {
+      setSpending(tempSpending);
+    }
+    setActiveModal(null);
   };
 
   return (
@@ -87,13 +131,24 @@ export default function Dashboard() {
                     })
                   : "$0.00"}
               </Typography>
-              <Button size="small" color="secondary" onClick={handleOpen}>
+              <Button
+                size="small"
+                color="secondary"
+                onClick={() => handleOpen("money")}
+              >
                 Edit
               </Button>
             </Box>
           </Box>
         </CardContent>
       </Card>
+      <EditMoneyModal
+        open={activeModal === "money"}
+        tempMoney={tempMoney}
+        onChange={setTempMoney}
+        onClose={handleClose}
+        onSave={handleSave}
+      />
       <Grid container spacing={3} mt={2}>
         <Grid item xs={12} md={3}>
           <Card elevation={3} sx={{ borderRadius: 2 }}>
@@ -120,39 +175,24 @@ export default function Dashboard() {
                         })
                       : "$0.00"}
                   </Typography>
-                  <Button size="small" color="secondary" onClick={handleOpen}>
+                  <Button
+                    size="small"
+                    color="secondary"
+                    onClick={() => handleOpen("income")}
+                  >
                     Edit
                   </Button>
                 </Box>
               </Box>
             </CardContent>
           </Card>
-          <Modal open={openModal} onClose={handleClose}>
-            <Box sx={modalStyle}>
-              <Typography variant="h6" mb={2}>
-                Edit Monthly Income
-              </Typography>
-              <TextField
-                label="Income"
-                type="number"
-                value={tempIncome}
-                onChange={(e) => setTempIncome(Number(e.target.value))}
-                fullWidth
-              />
-              <Box display="flex" justifyContent="space-between" mt={2}>
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  onClick={handleClose}
-                >
-                  Cancel
-                </Button>
-                <Button variant="contained" onClick={handleSave}>
-                  Save
-                </Button>
-              </Box>
-            </Box>
-          </Modal>
+          <EditIncomeModal
+            open={activeModal === "income"}
+            tempIncome={tempIncome}
+            onChange={setTempIncome}
+            onClose={handleClose}
+            onSave={handleSave}
+          />
         </Grid>
         <Grid item xs={12} md={3}>
           <Card elevation={3} sx={{ borderRadius: 2 }}>
@@ -179,7 +219,11 @@ export default function Dashboard() {
                         })
                       : "$0.00"}
                   </Typography>
-                  <Button size="small" color="secondary" onClick={handleOpen}>
+                  <Button
+                    size="small"
+                    color="secondary"
+                    onClick={() => handleOpen("goals")}
+                  >
                     Edit
                   </Button>
                 </Box>
@@ -212,13 +256,25 @@ export default function Dashboard() {
                         })
                       : "$0.00"}
                   </Typography>
-                  <Button size="small" color="secondary" onClick={handleOpen}>
+                  <Button
+                    size="small"
+                    color="secondary"
+                    onClick={() => handleOpen("credit")}
+                  >
                     Edit
                   </Button>
                 </Box>
               </Box>
             </CardContent>
           </Card>
+          <EditCreditModal
+            open={activeModal === "credit"}
+            tempCredit={tempCredit}
+            tempCreditUsage={tempCreditUsage}
+            onChange={setTempCredit}
+            onClose={handleClose}
+            onSave={handleSave}
+          />
         </Grid>
         <Grid item xs={12} md={3}>
           <Card elevation={3} sx={{ borderRadius: 2 }}>
@@ -240,7 +296,11 @@ export default function Dashboard() {
                   <Typography variant="h5" my={1}>
                     {spending}
                   </Typography>
-                  <Button size="small" color="secondary" onClick={handleOpen}>
+                  <Button
+                    size="small"
+                    color="secondary"
+                    onClick={() => handleOpen("spending")}
+                  >
                     Edit
                   </Button>
                 </Box>
